@@ -7,16 +7,24 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.kamillapinski.sjb.impl.NullHelper.arrayIfNull;
+
 /**
  * The only class you will ever need to use Simple Json Builder. Import static methods from this class to make use of SJB.
+ *
+ * Example:
+ * <pre>
+ *
+ * object(
+ *     field("hello", "world"),
+ *     field("array", array(1, 2, 3, 4))
+ * ).asString();
+ * </pre>
  */
 public class Json {
 	private Json() {
 	}
 
-	/**
-	 * @see Json#field
-	 */
 	public static JsonObject object(JsonField... fields) {
 		Objects.requireNonNull(fields);
 
@@ -31,9 +39,9 @@ public class Json {
 		return JsonArrayImpl.empty();
 	}
 
-	public static JsonArray array(Object firstValue, Object... nextValues) {
+	public static JsonArray array(Object... values) {
 		var elements
-			= Stream.concat(Stream.of(firstValue), Stream.of(nextValues))
+			= Stream.of(arrayIfNull(values))
 			        .map(JsonValueCreator::fromObject)
 			        .collect(Collectors.toList());
 
